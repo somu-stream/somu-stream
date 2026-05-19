@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Somu Stream</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink:      #e91e8c;
+            --pink-light:#ff4db8;
+            --blue:      #0a84ff;
+            --bg:        #080b14;
+            --surface:   #0f1525;
+            --surface2:  #16203a;
+            --border:    rgba(233,30,140,0.18);
+            --muted:     #7a8baa;
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; min-height: 100vh;
+            background: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ── Ambient blobs ── */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(233,30,140,0.1) 0%, rgba(10,132,255,0.04) 55%, transparent 80%);
+            top: -150px; right: -150px;
+            z-index: 0; pointer-events: none;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(10,132,255,0.1) 0%, rgba(233,30,140,0.03) 55%, transparent 80%);
+            bottom: -120px; left: -120px;
+            z-index: 0; pointer-events: none;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: rgba(10,13,22,0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(233,30,140,0.12);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+
+        .brand-logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #fff;
+            text-decoration: none;
+            display: flex; align-items: center;
+            cursor: pointer;
+            -webkit-user-select: none; user-select: none;
+        }
+        .brand-logo .s1 {
+            background: linear-gradient(135deg, var(--pink-light), var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .brand-logo .s2 {
+            background: linear-gradient(135deg, var(--blue), #60c0ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .direct-logout-btn {
+            background: rgba(255,51,68,0.08);
+            border: 1px solid rgba(255,51,68,0.22);
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #ff3344;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s;
+            -webkit-user-select: none; user-select: none;
+        }
+        .direct-logout-btn:hover {
+            background: #ff3344; color: #fff;
+            box-shadow: 0 0 20px rgba(255,51,68,0.3);
+        }
+
+        /* ── Utility bar ── */
+        .utility-hubbar {
+            max-width: 1400px;
+            margin: 28px auto 8px;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            position: relative; z-index: 5;
+        }
+
+        .myspace-pill {
+            display: flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, rgba(233,30,140,0.12), rgba(10,132,255,0.12));
+            border: 1px solid rgba(233,30,140,0.3);
+            padding: 11px 24px;
+            border-radius: 30px;
+            color: var(--pink-light);
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-user-select: none; user-select: none;
+        }
+        .myspace-pill:hover {
+            background: linear-gradient(135deg, rgba(233,30,140,0.25), rgba(10,132,255,0.2));
+            border-color: var(--pink);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(233,30,140,0.2);
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%; max-width: 380px;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 13px 18px 13px 46px;
+            background: var(--surface2);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #fff;
+            border-radius: 30px;
+            font-size: 13.5px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s;
+            -webkit-user-select: text; user-select: text;
+        }
+        .search-bar::placeholder { color: rgba(122,139,170,0.6); }
+        .search-bar:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 3px rgba(233,30,140,0.12);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px; top: 50%;
+            transform: translateY(-50%);
+            width: 16px; height: 16px;
+            fill: none;
+            stroke: var(--muted);
+            stroke-width: 2.5;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* ── Main container ── */
+        .main-container {
+            position: relative; z-index: 1;
+            padding: 20px 40px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #e1e6f0;
+            position: relative;
+            padding-left: 14px;
+            margin-bottom: 24px;
+            -webkit-user-select: none; user-select: none;
+        }
+        .section-title::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 3px; bottom: 3px; width: 4px;
+            background: linear-gradient(to bottom, var(--pink), var(--blue));
+            border-radius: 2px;
+        }
+
+        /* ── Grid ── */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 26px;
+        }
+
+        /* ── Movie card ── */
+        .movie-card {
+            background: var(--surface);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            position: relative;
+            -webkit-user-select: none; user-select: none;
+        }
+        .movie-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(233,30,140,0.3);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 0 20px rgba(233,30,140,0.08);
+        }
+
+        .thumbnail-placeholder {
+            width: 100%; height: 250px;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 800; font-size: 22px; color: #fff;
+            position: relative;
+            background-size: cover; background-position: center;
+            background-color: var(--surface2);
+            border-radius: 14px 14px 0 0;
+        }
+        .thumbnail-placeholder::after {
+            content: "";
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(10,13,22,0.85), transparent 60%);
+            pointer-events: none;
+            border-radius: 14px 14px 0 0;
+        }
+
+        /* ── Hover overlay ── */
+        .card-action-overlay {
+            position: absolute; inset: 0;
+            background: rgba(8,11,20,0.88);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 12px;
+            opacity: 0; z-index: 5;
+            transition: opacity 0.3s;
+        }
+        .movie-card:hover .card-action-overlay { opacity: 1; }
+
+        .action-btn {
+            width: 75%;
+            padding: 11px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            -webkit-user-select: none; user-select: none;
+        }
+        .action-btn:active { transform: scale(0.95); }
+
+        .btn-play {
+            background: linear-gradient(135deg, var(--pink), var(--blue));
+            color: #fff;
+        }
+        .btn-play:hover {
+            box-shadow: 0 6px 18px rgba(233,30,140,0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-info {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #e1e6f0;
+        }
+        .btn-info:hover { background: rgba(255,255,255,0.14); }
+
+        /* ── Movie info ── */
+        .movie-info {
+            padding: 14px 15px;
+            background: var(--surface);
+            position: relative;
+        }
+        .movie-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; max-width: 80%; }
+        .movie-desc  { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+
+        /* ── Rate button ── */
+        .btn-corner-rate {
+            position: absolute; bottom: 14px; right: 14px;
+            background: linear-gradient(135deg, rgba(233,30,140,0.12), rgba(10,132,255,0.12));
+            border: 1px solid rgba(233,30,140,0.3);
+            color: var(--pink-light);
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11px; font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 4px;
+            transition: all 0.2s;
+            -webkit-user-select: none; user-select: none;
+        }
+        .btn-corner-rate:hover {
+            background: linear-gradient(135deg, var(--pink), var(--blue));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(233,30,140,0.35);
+        }
+
+        /* ── Theatre modal ── */
+        .theatre-overlay-panel {
+            position: fixed; inset: 0;
+            background: rgba(4,6,12,0.96);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .theatre-overlay-panel.active { opacity: 1; pointer-events: auto; }
+
+        .theatre-wrapper {
+            position: relative;
+            width: 90%; max-width: 960px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(233,30,140,0.25);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 50px rgba(233,30,140,0.12);
+        }
+        .theatre-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .close-theatre-btn {
+            position: absolute; top: -48px; right: 0;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: #fff;
+            font-size: 13px; font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-user-select: none; user-select: none;
+        }
+        .close-theatre-btn:hover {
+            background: linear-gradient(135deg, var(--pink), var(--blue));
+            border-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            .navbar, .utility-hubbar, .main-container { padding-left: 18px; padding-right: 18px; }
+            .utility-hubbar { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .search-container { max-width: 100%; }
+            .close-theatre-btn { top: 10px; right: 10px; background: rgba(0,0,0,0.7); }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- Theatre Modal -->
+<div class="theatre-overlay-panel" id="theatre-panel">
+    <div class="theatre-wrapper">
+        <button class="close-theatre-btn" onclick="closeTheatre()">✕ Close Player</button>
+        <iframe id="video-player-frame" src="" allowfullscreen></iframe>
+    </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="#" class="brand-logo"><span class="s1">Somu</span><span class="s2">Stream</span></a>
+    <button class="direct-logout-btn" onclick="triggerLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Log Out
+    </button>
+</nav>
+
+<!-- Utility Bar -->
+<div class="utility-hubbar">
+    <button class="myspace-pill" onclick="alert('Navigating to Your Custom Space Hub! ⚡')">🚀 My Space</button>
+    <div class="search-container">
+        <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="search-bar" id="search-input" placeholder="Search Movies or Shows..." autocomplete="off">
+    </div>
+</div>
+
+<!-- Movie Grid -->
+<div class="main-container">
+    <div class="section-title">Trending Movies & Shows</div>
+    <div class="grid-container" id="movie-grid">
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('leo.jpg');">
+                Leo
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt15654328')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Leo (2023): High-Octane Action Blockbuster directed by Lokesh Kanagaraj.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Leo</div>
+                <div class="movie-desc">Action Thriller</div>
+                <button class="btn-corner-rate" onclick="alert('Leo Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('vikram.jpg');">
+                Vikram
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt9179430')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Vikram (2022): Ultimate action universe cinematic masterpiece.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Vikram</div>
+                <div class="movie-desc">Crime Action</div>
+                <button class="btn-corner-rate" onclick="alert('Vikram Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('master.jpg');">
+                Master
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt10579952')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Master (2021): Massive clash between an alcoholic professor and a gangster.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Master</div>
+                <div class="movie-desc">Action Drama</div>
+                <button class="btn-corner-rate" onclick="alert('Master Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('rrr.jpg');">
+                RRR
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt8178634')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('RRR (2022): SS Rajamouli\'s Oscar-Winning Global Action Epic.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">RRR</div>
+                <div class="movie-desc">Period Action</div>
+                <button class="btn-corner-rate" onclick="alert('RRR Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('avengers.jpg');">
+                Avengers
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt4154796')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Avengers: Marvel Superheroes assemble to save the universe.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Avengers</div>
+                <div class="movie-desc">Sci-Fi Hero Epic</div>
+                <button class="btn-corner-rate" onclick="alert('Avengers Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('pottru.jpg');">
+                Soorarai Pottru
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt10189514')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Soorarai Pottru: Inspirational National Award saga of a man who made common people fly.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Soorarai Pottru</div>
+                <div class="movie-desc">Biographical Drama</div>
+      <button class="btn-corner-rate" onclick="alert('Soorarai Pottru Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('beast.jpg');">
+                Beast
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt11301946')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Beast (2022): RAW agent takes over a hijacked mall.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Beast</div>
+                <div class="movie-desc">Action Thriller</div>
+                <button class="btn-corner-rate" onclick="alert('Beast Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('pushpa.jpg');">
+                Pushpa
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt9389998')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Pushpa (2021): Rise of a coolie in the red sandalwood smuggling empire.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Pushpa</div>
+                <div class="movie-desc">Action Crime</div>
+                <button class="btn-corner-rate" onclick="alert('Pushpa Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('jailer.jpg');">
+                Jailer
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt11663228')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('Jailer (2023): Superstar Rajinikanth\'s record-breaking mass transformation action.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">Jailer</div>
+                <div class="movie-desc">Action Comedy</div>
+                <button class="btn-corner-rate" onclick="alert('Jailer Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+        <div class="movie-card">
+            <div class="thumbnail-placeholder" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(15,21,37,0.9)), url('kgf2.jpg');">
+                KGF 2
+                <div class="card-action-overlay">
+                    <button class="action-btn btn-play" onclick="launchTheatre('https://streamimdb.ru/embed/movie/tt10698680')">▶ Play</button>
+                    <button class="action-btn btn-info" onclick="alert('KGF Chapter 2: Rocky Bhai rules the blood-soaked gold fields.')">ℹ More Info</button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <div class="movie-title">KGF 2</div>
+                <div class="movie-desc">Action Drama</div>
+                <button class="btn-corner-rate" onclick="alert('KGF 2 Rated 5 Stars! ⭐')">★ Rate</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const panel = document.getElementById('theatre-panel');
+    const frame = document.getElementById('video-player-frame');
+
+    function launchTheatre(streamUrl) {
+        frame.src = streamUrl;
+        panel.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeTheatre() {
+        panel.classList.remove('active');
+        frame.src = "";
+        document.body.style.overflow = 'auto';
+    }
+
+    function triggerLogout() {
+        window.location.href = 'index.html';
+    }
+
+    document.getElementById('search-input').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.movie-card');
+        cards.forEach(card => {
+            const title = card.querySelector('.movie-title').innerText.toLowerCase();
+            card.style.display = title.includes(query) ? "block" : "none";
+        });
+    });
+</script>
+</body>
+</html>

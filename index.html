@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Somu Stream</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink:    #e91e8c;
+            --pink-light: #ff4db8;
+            --blue:    #0a84ff;
+            --blue-dark: #0060cc;
+            --bg:      #080b14;
+            --surface: #0f1525;
+            --surface2:#16203a;
+            --border:  rgba(233, 30, 140, 0.18);
+            --text:    #ffffff;
+            --muted:   #7a8baa;
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            overflow: hidden;
+            position: relative;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            -khtml-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        /* ── Ambient background blobs ── */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 520px; height: 520px;
+            background: radial-gradient(circle, rgba(233,30,140,0.18) 0%, rgba(10,132,255,0.06) 55%, transparent 80%);
+            top: -120px; right: -120px;
+            z-index: 0; pointer-events: none;
+            animation: blobFloat 8s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            width: 440px; height: 440px;
+            background: radial-gradient(circle, rgba(10,132,255,0.16) 0%, rgba(233,30,140,0.05) 55%, transparent 80%);
+            bottom: -110px; left: -110px;
+            z-index: 0; pointer-events: none;
+            animation: blobFloat 10s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes blobFloat {
+            0%   { transform: scale(1) translate(0,0); }
+            100% { transform: scale(1.12) translate(20px, 15px); }
+        }
+
+        /* ── Card ── */
+        .auth-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            background: var(--surface);
+            padding: 44px 38px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow:
+                0 30px 60px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(233,30,140,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+            width: 90%;
+            max-width: 390px;
+            box-sizing: border-box;
+        }
+
+        /* ── Brand ── */
+        .brand-box {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .brand-logo {
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #fff;
+            display: inline-block;
+        }
+        .brand-logo .s1 {
+            background: linear-gradient(135deg, var(--pink-light) 0%, var(--pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .brand-logo .s2 {
+            background: linear-gradient(135deg, var(--blue) 0%, #60c0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* pill badge */
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, rgba(233,30,140,0.15), rgba(10,132,255,0.15));
+            border: 1px solid rgba(233,30,140,0.3);
+            border-radius: 100px;
+            padding: 4px 14px;
+            margin-top: 8px;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .brand-badge::before {
+            content: "";
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink), var(--blue));
+        }
+
+        /* ── Divider line under brand ── */
+        .brand-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(233,30,140,0.35), rgba(10,132,255,0.35), transparent);
+            margin: 0 -10px 28px;
+        }
+
+        h2 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 22px;
+            color: #cdd6f4;
+            text-align: left;
+            letter-spacing: 0.1px;
+        }
+
+        /* ── Inputs ── */
+        .input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 50px 15px 16px;
+            background: var(--surface2);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        input::placeholder { color: rgba(122,139,170,0.7); font-size: 14px; }
+        input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 3px rgba(233,30,140,0.12);
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 14px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0; margin: 0;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5; outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .toggle-password-btn svg {
+            width: 100%; height: 100%;
+            fill: none; stroke: currentColor;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .toggle-password-btn:hover { color: #fff; }
+
+        /* ── Buttons ── */
+        button[type="submit"], .otp-trigger-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 100%);
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.25s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        button[type="submit"]::before, .otp-trigger-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--pink-light) 0%, var(--blue) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        button[type="submit"]:hover::before, .otp-trigger-btn:hover::before { opacity: 1; }
+        button[type="submit"]:hover, .otp-trigger-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(233,30,140,0.4), 0 4px 12px rgba(10,132,255,0.25);
+        }
+        button[type="submit"] span, .otp-trigger-btn span { position: relative; z-index: 1; }
+
+        /* ── Toggle text ── */
+        .toggle-text {
+            text-align: center;
+            margin-top: 26px;
+            font-size: 13.5px;
+            color: var(--muted);
+        }
+        .toggle-text span {
+            background: linear-gradient(90deg, var(--pink-light), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .toggle-text span:hover { opacity: 0.8; text-decoration: underline; }
+
+        /* ── Toast ── */
+        .toast-notification {
+            position: fixed;
+            top: -100px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border: 1px solid rgba(233,30,140,0.35);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(233,30,140,0.1);
+            padding: 14px 22px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 85%;
+            max-width: 350px;
+            box-sizing: border-box;
+            transition: top 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .toast-notification.success { border-left: 4px solid var(--pink); }
+        .toast-notification.error   { border-left: 4px solid #ff3344; }
+        .toast-notification.show    { top: 22px; }
+    </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;">
+
+<div id="custom-toast" class="toast-notification">
+    <span id="toast-icon" style="font-size:17px;"></span>
+    <span id="toast-message"></span>
+</div>
+
+<div class="auth-container">
+    <div class="brand-box">
+        <div class="brand-logo"><span class="s1">Somu</span><span class="s2">Stream</span></div>
+        <div class="brand-badge">Movies • Web Series • Shows</div>
+    </div>
+
+    <div class="brand-divider"></div>
+
+    <h2 id="form-title">Log in to continue</h2>
+
+    <form id="auth-form">
+        <div class="input-group">
+            <input type="text" id="email" placeholder="Enter Email Address" required autocomplete="off">
+        </div>
+
+        <div class="input-group" id="phone-wrapper" style="display:none;">
+            <input type="tel" id="phone" placeholder="Enter Phone Number" autocomplete="off">
+        </div>
+
+        <div class="input-group" id="otp-wrapper" style="display:none;">
+            <input type="text" id="otp" placeholder="Enter 6-Digit OTP" maxlength="6" autocomplete="off">
+        </div>
+
+        <div class="input-group" id="password-wrapper">
+            <input type="password" id="password" placeholder="Enter Password">
+            <button type="button" class="toggle-password-btn" id="eye-toggle-btn" onclick="togglePassword()">
+                <svg id="eye-icon" viewBox="0 0 24 24">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+
+        <button type="button" id="otp-btn" class="otp-trigger-btn" style="display:none;" onclick="sendOTPHandler()"><span>Send Signup OTP</span></button>
+        <button type="submit" id="submit-btn"><span>Login</span></button>
+    </form>
+
+    <div class="toggle-text" id="toggle-container">
+        New to Somu Stream?<span id="toggle-link" onclick="toggleForm()">Sign Up Now</span>
+    </div>
+</div>
+
+<script>
+    let isLogin = true;
+    let otpSent = false;
+
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('selectstart', event => event.preventDefault());
+
+    const protectedElements = document.querySelectorAll('.brand-logo, .brand-badge, h2, .toggle-text, button');
+    protectedElements.forEach(el => {
+        el.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, {passive: false});
+    });
+
+    function showPremiumToast(message, type = "success") {
+        const toast = document.getElementById('custom-toast');
+        const toastMsg = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        toast.className = "toast-notification";
+        if (type === "success") {
+            toast.classList.add('success');
+            toastIcon.innerHTML = "⚡";
+        } else {
+            toast.classList.add('error');
+            toastIcon.innerHTML = "⚠️";
+        }
+        toastMsg.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.innerHTML = `
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>`;
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.innerHTML = `
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>`;
+        }
+    }
+
+    function toggleForm() {
+        isLogin = !isLogin;
+        otpSent = false;
+
+        const formTitle = document.getElementById('form-title');
+        const submitBtn = document.getElementById('submit-btn');
+        const otpBtn = document.getElementById('otp-btn');
+        const toggleContainer = document.getElementById('toggle-container');
+        const emailInput = document.getElementById('email');
+        const phoneWrapper = document.getElementById('phone-wrapper');
+        const otpWrapper = document.getElementById('otp-wrapper');
+        const phoneInput = document.getElementById('phone');
+        const otpInput = document.getElementById('otp');
+
+        phoneInput.required = false;
+        otpInput.required = false;
+        otpWrapper.style.display = 'none';
+
+        if (!isLogin) {
+            formTitle.innerText = "Create new account";
+            emailInput.placeholder = "Enter Email Address";
+            phoneWrapper.style.display = 'none';
+            phoneInput.required = false;
+            otpBtn.style.display = 'none';
+            submitBtn.style.display = 'block';
+            submitBtn.querySelector('span').innerText = "Sign Up";
+            toggleContainer.innerHTML = 'Already have an account?<span id="toggle-link" onclick="toggleForm()">Login Now</span>';
+        } else {
+            formTitle.innerText = "Log in to continue";
+            emailInput.placeholder = "Enter Email Address";
+            phoneWrapper.style.display = 'none';
+            otpBtn.style.display = 'none';
+            submitBtn.style.display = 'block';
+            submitBtn.querySelector('span').innerText = "Login";
+            toggleContainer.innerHTML = 'New to Somu Stream?<span id="toggle-link" onclick="toggleForm()">Sign Up Now</span>';
+        }
+    }
+
+    async function sendOTPHandler() {
+        const phone = document.getElementById('phone').value;
+        if (!phone || phone.length < 10) {
+            showPremiumToast("Correct phone number enter pannunga bro!", "error");
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:5000/api/send-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                showPremiumToast("6-Digit OTP Send aayiruchu bro!", "success");
+                document.getElementById('otp-wrapper').style.display = 'block';
+                document.getElementById('otp').required = true;
+                document.getElementById('otp-btn').style.display = 'none';
+                const submitBtn = document.getElementById('submit-btn');
+                submitBtn.style.display = 'block';
+                submitBtn.querySelector('span').innerText = "Verify OTP & Sign Up";
+                otpSent = true;
+            } else {
+                showPremiumToast(data.message, "error");
+            }
+        } catch (error) {
+            showPremiumToast("Backend OTP Connection Failed!", "error");
+        }
+    }
+
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (isLogin) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showPremiumToast(data.message, "success");
+                    setTimeout(() => { window.location.href = 'home.html'; }, 1600);
+                } else {
+                    showPremiumToast(data.message, "error");
+                }
+            } catch (error) {
+                showPremiumToast("Server Login Connection Failed!", "error");
+            }
+        } else {
+            try {
+                const response = await fetch(`http://localhost:5000/api/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showPremiumToast("Registration Successful! 🚀", "success");
+                    setTimeout(() => { toggleForm(); }, 1600);
+                } else {
+                    showPremiumToast(data.message, "error");
+                }
+            } catch (error) {
+                showPremiumToast("Server Signup Connection Failed!", "error");
+            }
+        }
+    });
+</script>
+</body>
+</html>

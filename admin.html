@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Somu Stream - Admin Gateway</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink:      #e91e8c;
+            --pink-light:#ff4db8;
+            --blue:      #0a84ff;
+            --bg:        #080b14;
+            --surface:   #0f1525;
+            --surface2:  #16203a;
+            --border:    rgba(233,30,140,0.18);
+            --muted:     #7a8baa;
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            -khtml-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        /* ── Ambient blobs ── */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 520px; height: 520px;
+            background: radial-gradient(circle, rgba(233,30,140,0.18) 0%, rgba(10,132,255,0.06) 55%, transparent 80%);
+            top: -120px; right: -120px;
+            z-index: 0; pointer-events: none;
+            animation: blobFloat 8s ease-in-out infinite alternate;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            width: 440px; height: 440px;
+            background: radial-gradient(circle, rgba(10,132,255,0.16) 0%, rgba(233,30,140,0.05) 55%, transparent 80%);
+            bottom: -110px; left: -110px;
+            z-index: 0; pointer-events: none;
+            animation: blobFloat 10s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes blobFloat {
+            0%   { transform: scale(1) translate(0,0); }
+            100% { transform: scale(1.12) translate(20px,15px); }
+        }
+
+        /* ── Admin Login Card ── */
+        #admin-login-view {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: var(--surface);
+            padding: 44px 38px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow:
+                0 30px 60px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(233,30,140,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+            width: 90%;
+            max-width: 390px;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        /* ── Brand ── */
+        .brand-box {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .brand-logo {
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #fff;
+            display: inline-block;
+        }
+        .brand-logo .s1 {
+            background: linear-gradient(135deg, var(--pink-light), var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .brand-logo .s2 {
+            background: linear-gradient(135deg, var(--blue), #60c0ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, rgba(233,30,140,0.15), rgba(10,132,255,0.15));
+            border: 1px solid rgba(233,30,140,0.3);
+            border-radius: 100px;
+            padding: 4px 14px;
+            margin-top: 8px;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .brand-badge::before {
+            content: "";
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink), var(--blue));
+        }
+        .brand-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(233,30,140,0.35), rgba(10,132,255,0.35), transparent);
+            margin: 0 -10px 26px;
+        }
+
+        h2 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 22px;
+            color: #cdd6f4;
+            text-align: left;
+            letter-spacing: 0.1px;
+        }
+
+        /* ── Inputs ── */
+        .input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 15px 50px 15px 16px;
+            background: var(--surface2);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        input::placeholder { color: rgba(122,139,170,0.7); font-size: 14px; }
+        input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 3px rgba(233,30,140,0.12);
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 14px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0; margin: 0;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5; outline: none;
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .toggle-password-btn:hover { color: #fff; }
+
+        /* ── Submit button ── */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 100%);
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.25s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .submit-btn::before {
+            content: "";
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, var(--pink-light), var(--blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .submit-btn:hover::before { opacity: 1; }
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(233,30,140,0.4), 0 4px 12px rgba(10,132,255,0.25);
+        }
+        .submit-btn span { position: relative; z-index: 1; }
+
+        /* ── Dashboard ── */
+        #admin-dashboard-view {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 32px 50px;
+            position: relative; z-index: 1;
+            display: none;
+            box-sizing: border-box;
+            height: auto;
+            overflow-y: auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(233,30,140,0.18);
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+        .dashboard-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(90deg, var(--pink-light), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid rgba(255,51,68,0.3);
+            color: #ff3344;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-user-select: none; user-select: none;
+        }
+        .logout-btn:hover {
+            background: #ff3344; color: #fff;
+            box-shadow: 0 0 16px rgba(255,51,68,0.3);
+        }
+
+        /* ── Table ── */
+        .table-responsive {
+            background: var(--surface);
+            border-radius: 14px;
+            border: 1px solid rgba(233,30,140,0.12);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 500px;
+        }
+        th, td {
+            padding: 16px 22px;
+            font-size: 13.5px;
+            font-family: 'Poppins', sans-serif;
+        }
+        th {
+            background: var(--surface2);
+            color: var(--pink-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(233,30,140,0.15);
+        }
+        td {
+            color: #e1e6f0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: rgba(10,132,255,0.03); }
+        tr:hover td { background: rgba(233,30,140,0.04); }
+
+        /* ── Toast ── */
+        .toast-notification {
+            position: fixed;
+            top: -100px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border: 1px solid rgba(233,30,140,0.35);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(233,30,140,0.1);
+            padding: 14px 22px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 85%;
+            max-width: 350px;
+            box-sizing: border-box;
+            transition: top 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .toast-notification.success { border-left: 4px solid var(--pink); }
+        .toast-notification.error   { border-left: 4px solid #ff3344; }
+        .toast-notification.show    { top: 22px; }
+    </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;">
+
+<div id="custom-toast" class="toast-notification">
+    <span id="toast-icon" style="font-size:17px;"></span>
+    <span id="toast-message"></span>
+</div>
+
+<!-- Admin Login Card -->
+<div id="admin-login-view">
+    <div class="brand-box">
+        <div class="brand-logo"><span class="s1">Somu</span><span class="s2">Admin</span></div>
+        <div class="brand-badge">Control & Analytics</div>
+    </div>
+
+    <div class="brand-divider"></div>
+
+    <h2>Admin Verification</h2>
+
+    <form id="admin-login-form">
+        <div class="input-group">
+            <input type="text" id="admin-username" placeholder="Enter Admin Username" required autocomplete="off">
+        </div>
+        <div class="input-group">
+            <input type="password" id="admin-password" placeholder="Enter Secure Password" required>
+            <button type="button" class="toggle-password-btn" id="eye-toggle-btn" onclick="togglePasswordVisibility()">👁️</button>
+        </div>
+        <button type="submit" class="submit-btn"><span>Verify Gateway</span></button>
+    </form>
+</div>
+
+<!-- Admin Dashboard -->
+<div id="admin-dashboard-view">
+    <div class="dashboard-header">
+        <h1>Admin Core Users</h1>
+        <button class="logout-btn" onclick="logoutAdmin()">Exit Session</button>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:12%;">S.No</th>
+                    <th style="width:44%;">Email ID</th>
+                    <th style="width:44%;">Password (Hashed)</th>
+                </tr>
+            </thead>
+            <tbody id="user-table-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('selectstart', event => event.preventDefault());
+
+    function showAdminToast(message, type = "success") {
+        const toast = document.getElementById('custom-toast');
+        const toastMsg = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        toast.className = "toast-notification";
+        if (type === "success") {
+            toast.classList.add('success');
+            toastIcon.innerHTML = "🔒";
+        } else {
+            toast.classList.add('error');
+            toastIcon.innerHTML = "⚠️";
+        }
+        toastMsg.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function togglePasswordVisibility() {
+        const passInput = document.getElementById('admin-password');
+        const eyeBtn = document.getElementById('eye-toggle-btn');
+        if (passInput.type === "password") {
+            passInput.type = "text";
+            eyeBtn.innerText = "🙈";
+        } else {
+            passInput.type = "password";
+            eyeBtn.innerText = "👁️";
+        }
+    }
+
+    document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const userVal = document.getElementById('admin-username').value.trim();
+        const passVal = document.getElementById('admin-password').value.trim();
+
+        if (userVal === "somu" && passVal === "2009") {
+            showAdminToast("Access Granted. Fetching Cloud Core...", "success");
+            setTimeout(() => {
+                document.getElementById('admin-login-view').style.display = 'none';
+                const dash = document.getElementById('admin-dashboard-view');
+                dash.style.display = 'block';
+                document.body.style.overflow = 'auto';
+                loadUsers();
+            }, 1200);
+        } else {
+            showAdminToast("Invalid Admin Configuration Credentials!", "error");
+        }
+    });
+
+    async function loadUsers() {
+        try {
+            const response = await fetch('http://localhost:5000/api/admin/users');
+            const users = await response.json();
+            const tbody = document.getElementById('user-table-body');
+
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:30px;">No user records found in the database.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = users.map((u, index) => `
+                <tr>
+                    <td style="color:var(--pink-light);font-weight:700;">${index + 1}</td>
+                    <td style="font-weight:500;">${u.email}</td>
+                    <td style="font-family:monospace;color:var(--muted);word-break:break-all;font-size:12px;">${u.password}</td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            showAdminToast("Database Fetch Offline! Check Termux.", "error");
+        }
+    }
+
+    function logoutAdmin() {
+        document.getElementById('admin-username').value = '';
+        document.getElementById('admin-password').value = '';
+        document.getElementById('admin-password').type = 'password';
+        document.getElementById('eye-toggle-btn').innerText = '👁️';
+        document.getElementById('admin-dashboard-view').style.display = 'none';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('admin-login-view').style.display = 'block';
+        showAdminToast("Session Terminated. Control Blocked.", "success");
+    }
+</script>
+</body>
+</html>
