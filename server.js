@@ -7,8 +7,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// ✅ Itha add pannunga — HTML files serve aagum
-app.use(express.static('public'));
+
+app.use(express.static('.'));
 
 const db = new Datastore({ filename: './users.db', autoload: true });
 console.log("NeDB Permanent Database Ready!");
